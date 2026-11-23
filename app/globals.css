@@ -477,10 +477,6 @@ dialog form {
   margin-top: 16px;
 }
 
-.booking-service {
-  grid-column: 1 / -1;
-}
-
 .fields {
   display: grid;
   grid-template-columns: 1fr 1fr;
