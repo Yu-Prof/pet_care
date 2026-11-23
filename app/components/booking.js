@@ -5,9 +5,9 @@ import { services } from '../services';
 
 const BookingContext = createContext(null);
 
-function localToday() {
-  const today = new Date();
-  const pad = number => String(number).padStart(2, '0');
+const pad = number => String(number).padStart(2, '0');
+
+function localToday(today = new Date()) {
   return [today.getFullYear(), pad(today.getMonth() + 1), pad(today.getDate())].join('-');
 }
 
@@ -32,30 +32,36 @@ export function BookingProvider({ children }) {
   }, [result]);
 
   function openBooking(service) {
-    const { date, pet, service: serviceField } = form.current.elements;
+    const { date, service: serviceField } = form.current.elements;
     date.min = localToday();
-    pet.setCustomValidity('');
+    clearValidation();
     if (service) serviceField.value = service;
-    setResult('');
     dialog.current.showModal();
   }
 
   function clearValidation() {
-    form.current.elements.pet.setCustomValidity('');
+    const { pet, arrivalTime } = form.current.elements;
+    pet.setCustomValidity('');
+    arrivalTime.setCustomValidity('');
     setResult('');
   }
 
   function createSummary(event) {
     event.preventDefault();
     const bookingForm = event.currentTarget;
-    const { date, pet } = bookingForm.elements;
-    date.min = localToday();
+    const { date, pet, arrivalTime } = bookingForm.elements;
+    const now = new Date();
+    const today = localToday(now);
+    const currentTime = [pad(now.getHours()), pad(now.getMinutes())].join(':');
+    date.min = today;
     const petName = pet.value.trim();
     pet.setCustomValidity(petName ? '' : '请输入宠物昵称');
+    const timeHasPassed = date.value === today && arrivalTime.value < currentTime;
+    arrivalTime.setCustomValidity(timeHasPassed ? '请选择当前或之后的到店时间' : '');
     if (!bookingForm.reportValidity()) return;
 
     const data = new FormData(bookingForm);
-    const details = [`${petName}（${data.get('species')}）`, data.get('service'), date.value];
+    const details = [`${petName}（${data.get('species')}）`, data.get('service'), `${date.value} ${arrivalTime.value}`];
     const notes = data.get('notes').trim();
     if (notes) details.push(notes);
     setResult(`已生成预约信息。 ${details.join(' · ')}。此信息尚未发送给门店。`);
@@ -85,7 +91,7 @@ export function BookingProvider({ children }) {
                 <option>猫咪</option>
               </select>
             </label>
-            <label>
+            <label className="booking-service">
               洗护项目
               <select name="service" required>
                 {services.map(({ id, name }) => <option key={id}>{name}</option>)}
@@ -94,6 +100,10 @@ export function BookingProvider({ children }) {
             <label>
               到店日期
               <input type="date" name="date" required />
+            </label>
+            <label>
+              期望到店时间
+              <input type="time" name="arrivalTime" required />
             </label>
           </div>
           <label>

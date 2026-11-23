@@ -154,7 +154,7 @@ export default function Home() {
         <section className="booking wrap">
           <div>
             <h2>给毛孩子约个洗澡时间</h2>
-            <p>选好服务和日期，生成一份预约信息。</p>
+            <p>选好服务和到店日期、时间，生成一份预约信息。</p>
           </div>
           <BookingButton className="btn btn-dark">填写预约</BookingButton>
         </section>
