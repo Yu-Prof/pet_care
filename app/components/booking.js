@@ -91,7 +91,7 @@ export function BookingProvider({ children }) {
                 <option>猫咪</option>
               </select>
             </label>
-            <label>
+            <label className="booking-service">
               洗护项目
               <select name="service" required>
                 {services.map(({ id, name }) => <option key={id}>{name}</option>)}
@@ -101,11 +101,11 @@ export function BookingProvider({ children }) {
               到店日期
               <input type="date" name="date" required />
             </label>
+            <label>
+              期望到店时间
+              <input type="time" name="arrivalTime" required />
+            </label>
           </div>
-          <label>
-            期望到店时间
-            <input type="time" name="arrivalTime" required />
-          </label>
           <label>
             备注
             <input name="notes" maxLength={100} placeholder="选填，例如第一次洗澡" />
