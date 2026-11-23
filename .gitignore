@@ -1,0 +1,14 @@
+# Dependencies and build output
+/node_modules/
+/.next/
+/out/
+
+# Local settings and logs
+.DS_Store
+.env*
+!.env.example
+npm-debug.log*
+
+# Standalone HTML backup and its images
+/index.html
+/assets/store/
